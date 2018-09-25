@@ -2,10 +2,10 @@ package database
 
 import (
     "log"
-    // "time"
+    "time"
     "github.com/press-play/relation/models"
     "gopkg.in/mgo.v2"
-    "gopkg.in/mgo.v2/bson"
+    // "gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -33,15 +33,15 @@ func Connect() {
 }
 
 func PopulateTestData() {
-    m = Mongo
-    s = Session
+    m := Mongo
+    s := Session
 
-    err = s.DB("relation").DropDatabase()
+    err := s.DB("relation").DropDatabase()
     if err != nil {
         panic(err)
     }
 
-    c := s.DB("relation").C("people")
+    c := s.DB(m.Database).C("people")
     err = c.Insert(&models.Person{Name: "Khanh Nguyen", Email: "khanh@email.com", Created: time.Now()},
                     &models.Person{Name: "Test User", Email: "test@email.com", Created: time.Now()})
     if err != nil {
