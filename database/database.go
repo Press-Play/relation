@@ -42,8 +42,8 @@ func PopulateTestData() {
     }
 
     c := s.DB(m.Database).C("people")
-    err = c.Insert(&models.Person{Name: "Khanh Nguyen", Email: "khanh@email.com", Created: time.Now()},
-                    &models.Person{Name: "Test User", Email: "test@email.com", Created: time.Now()})
+    err = c.Insert(&models.Person{Name: "Khanh Nguyen", Created: time.Now()},
+                    &models.Person{Name: "Test User", Created: time.Now()})
     if err != nil {
         log.Fatal(err)
     }

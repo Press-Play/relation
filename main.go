@@ -3,6 +3,7 @@ package main
 import (
     "github.com/press-play/relation/database"
     "github.com/press-play/relation/handlers/people"
+    "github.com/press-play/relation/handlers/users"
     "github.com/gin-gonic/gin"
 )
 
@@ -17,8 +18,10 @@ func main() {
 
     v1 := r.Group("/api/v1")
     {
-        v1.GET("/people/:_id", people.PeopleFind)
-        v1.POST("/people/new", people.PeopleInsert)
+        v1.GET("/people/:_id", people.Find)
+        v1.POST("/people/new", people.Insert)
+
+        v1.POST("/users", users.Insert)
     }
     r.Run(":8000")
 }

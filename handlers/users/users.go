@@ -1,4 +1,4 @@
-package people
+package users
 
 import(
     "time"
@@ -7,26 +7,13 @@ import(
     "github.com/press-play/relation/models"
     "github.com/gin-gonic/gin"
     "gopkg.in/mgo.v2"
-    "gopkg.in/mgo.v2/bson"
 )
 
-func Find(c *gin.Context) {
-    db := c.MustGet(database.Param).(*mgo.Database)
-    id := bson.ObjectIdHex(c.Param("_id"))
-
-    result := models.Person{}
-    err := db.C(models.PersonCollection).FindId(id).One(&result)
-    if err != nil {
-        c.Error(err)
-        return
-    }
-
-    c.JSON(http.StatusOK, result)
-}
+func Find(c *gin.Context) {}
 
 func Insert(c *gin.Context) {
     db := c.MustGet(database.Param).(*mgo.Database)
-    result := models.Person{}
+    result := models.User{}
     err := c.Bind(&result)
     if err != nil {
         c.Error(err)
@@ -34,7 +21,7 @@ func Insert(c *gin.Context) {
     }
 
     result.Created = time.Now()
-    err = db.C(models.PersonCollection).Insert(&result)
+    err = db.C(models.UserCollection).Insert(&result)
     if err != nil {
         c.Error(err)
         return
