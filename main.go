@@ -1,7 +1,9 @@
 package main
 
 import (
+    "log"
     "github.com/press-play/relation/database"
+    "github.com/press-play/relation/handlers/auth"
     "github.com/press-play/relation/handlers/people"
     "github.com/press-play/relation/handlers/users"
     "github.com/gin-gonic/gin"
@@ -16,13 +18,19 @@ func main() {
 
     r.GET("/ping", ping)
 
+    r.POST("/api/v1/auth/login", auth.RequestToken)
+
     v1 := r.Group("/api/v1")
+    v1.Use(Authentication)
     {
         v1.GET("/people/:_id", people.Find)
         v1.POST("/people/new", people.Insert)
 
         v1.POST("/users", users.Insert)
+
+        v1.POST("/logout", auth.InvalidateToken)
     }
+
     r.Run(":8000")
 }
 
@@ -31,6 +39,14 @@ func Database(c *gin.Context) {
     defer s.Close()
 
     c.Set(database.Param, database.Session.DB(database.Mongo.Database))
+    c.Next()
+}
+
+func Authentication(c *gin.Context) {
+    token := c.Request.Header.Get("Authorization")
+    log.Print(token)
+    // TODO: Return 403 if the token does not match.
+    // c.AbortWithStatus(403)
     c.Next()
 }
 
