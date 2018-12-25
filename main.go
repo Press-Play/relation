@@ -18,15 +18,17 @@ func main() {
 
     r.GET("/ping", ping)
 
-    r.POST("/api/v1/auth/login", auth.RequestToken)
+    public := r.Group("/api/v1")
+    {
+        public.POST("/auth/login", auth.RequestToken)
+        public.POST("/users", users.Insert)
+    }
 
     v1 := r.Group("/api/v1")
     v1.Use(Authentication)
     {
         v1.GET("/people/:_id", people.Find)
         v1.POST("/people/new", people.Insert)
-
-        v1.POST("/users", users.Insert)
 
         v1.POST("/logout", auth.InvalidateToken)
     }
