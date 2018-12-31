@@ -1,11 +1,10 @@
 package auth
 
-import(
+import (
     "net/http"
-    "fmt"
-    "crypto/rand"
     "github.com/press-play/relation/models"
     "github.com/press-play/relation/database"
+    "github.com/press-play/relation/utils"
     "github.com/gin-gonic/gin"
     "golang.org/x/crypto/bcrypt"
     "gopkg.in/mgo.v2"
@@ -30,30 +29,30 @@ func RequestToken(c *gin.Context) {
     params := Login{}
     err := c.Bind(&params)
     if err != nil {
-        c.Error(err)
+        c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 
     user := models.User{}
     err = db.C(models.UserCollection).Find(bson.M{"email": params.Email}).One(&user)
     if err != nil {
-        c.Error(err)
+        c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 
     // Check that the password matches.
     err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(params.Password))
     if err != nil {
-        c.Error(err)
+        c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 
     // Generate and store API authentication token.
-    result.Token = generateToken()
+    result.Token = utils.GenerateToken()
     user.APIToken = result.Token
     err = db.C(models.UserCollection).Update(bson.M{"_id": user.ID}, &user)
     if err != nil {
-        c.Error(err)
+        c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 
@@ -62,11 +61,4 @@ func RequestToken(c *gin.Context) {
 
 func InvalidateToken(c *gin.Context) {
     // Invalidates the API authentication token for the currently logged in user.
-
-}
-
-func generateToken() string {
-    b := make([]byte, 24)
-    rand.Read(b)
-    return fmt.Sprintf("%x", b)
 }

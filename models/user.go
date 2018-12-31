@@ -2,7 +2,10 @@ package models
 
 import (
     "time"
+    "gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
+    "golang.org/x/crypto/bcrypt"
+    "github.com/press-play/relation/utils"
 )
 
 const (
@@ -16,3 +19,38 @@ type User struct {
     APIToken  string `json:"api_token,omitempty" bson:"api_token,omitempty"`
     Created   time.Time `json:"created" bson:"created"`
 }
+
+func UserFind(user User, db *mgo.Database) {}
+
+func UserInsert(user User, db *mgo.Database) (record User, err error) {
+    // Create an _id so we can return it.
+    user.ID = bson.NewObjectId()
+
+    // Record the time the record was created.
+    user.Created = time.Now()
+
+    // Hash the password.
+    pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
+    if err != nil {
+        return User{}, err
+    }
+    user.Password = string(pass)
+
+    // Generate API authentication token for use immediately.
+    user.APIToken = utils.GenerateToken()
+
+    // Insert the reocrd into database collection.
+    err = db.C(UserCollection).Insert(&user)
+    if err != nil {
+        return User{}, err
+    }
+
+    // Remove password from the response.
+    user.Password = ""
+
+    // Return the record.
+    return user, err
+}
+
+func UserUpdate(user User, db *mgo.Database) {}
+func UserDelete(user User, db *mgo.Database) {}

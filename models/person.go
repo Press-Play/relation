@@ -16,3 +16,8 @@ type Person struct {
     UserID    bson.ObjectId `json:"user_id,omitempty" bson:"user_id,omitempty"`
     Created   time.Time `json:"created" bson:"created"`
 }
+
+// func PersonFind(u User, db *mgo.Database) {}
+// func PersonInsert(u User, db *mgo.Database) {}
+// func PersonUpdate(u User, db *mgo.Database) {}
+// func PersonDelete(u User, db *mgo.Database) {}

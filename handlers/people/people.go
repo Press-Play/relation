@@ -17,7 +17,7 @@ func Find(c *gin.Context) {
     result := models.Person{}
     err := db.C(models.PersonCollection).FindId(id).One(&result)
     if err != nil {
-        c.Error(err)
+        c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 
@@ -29,14 +29,14 @@ func Insert(c *gin.Context) {
     result := models.Person{}
     err := c.Bind(&result)
     if err != nil {
-        c.Error(err)
+        c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 
     result.Created = time.Now()
     err = db.C(models.PersonCollection).Insert(&result)
     if err != nil {
-        c.Error(err)
+        c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 

@@ -21,7 +21,7 @@ func main() {
     public := r.Group("/api/v1")
     {
         public.POST("/auth/login", auth.RequestToken)
-        public.POST("/users", users.Insert)
+        public.POST("/users", users.CreateAccount)
     }
 
     v1 := r.Group("/api/v1")
