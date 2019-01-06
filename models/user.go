@@ -20,7 +20,15 @@ type User struct {
     Created   time.Time `json:"created" bson:"created"`
 }
 
-func UserFind(user User, db *mgo.Database) {}
+func UserFindOne(query bson.M, db *mgo.Database) (record User, err error) {
+    user := User{}
+    err = db.C(UserCollection).Find(query).One(&user)
+    if err != nil {
+        return User{}, err
+    }
+
+    return user, err
+}
 
 func UserInsert(user User, db *mgo.Database) (record User, err error) {
     // Create an _id so we can return it.
@@ -52,5 +60,5 @@ func UserInsert(user User, db *mgo.Database) (record User, err error) {
     return user, err
 }
 
-func UserUpdate(user User, db *mgo.Database) {}
-func UserDelete(user User, db *mgo.Database) {}
+// func UserUpdate(user User, db *mgo.Database) (record User, err error) {}
+// func UserDelete(user User, db *mgo.Database) (record User, err error) {}

@@ -17,7 +17,7 @@ type Person struct {
     Created   time.Time `json:"created" bson:"created"`
 }
 
-// func PersonFind(u User, db *mgo.Database) {}
-// func PersonInsert(u User, db *mgo.Database) {}
-// func PersonUpdate(u User, db *mgo.Database) {}
-// func PersonDelete(u User, db *mgo.Database) {}
+// func PersonFind(u User, db *mgo.Database) (record User, err error) {}
+// func PersonInsert(u User, db *mgo.Database) (record User, err error) {}
+// func PersonUpdate(u User, db *mgo.Database) (record User, err error) {}
+// func PersonDelete(u User, db *mgo.Database) (record User, err error) {}

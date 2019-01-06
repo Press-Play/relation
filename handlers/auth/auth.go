@@ -33,8 +33,7 @@ func RequestToken(c *gin.Context) {
         return
     }
 
-    user := models.User{}
-    err = db.C(models.UserCollection).Find(bson.M{"email": params.Email}).One(&user)
+    user, err := models.UserFindOne(bson.M{"email": params.Email}, db)
     if err != nil {
         c.AbortWithError(http.StatusBadRequest, err)
         return
