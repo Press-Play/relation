@@ -20,6 +20,16 @@ type User struct {
     Created   time.Time `json:"created" bson:"created"`
 }
 
+func UserFindId(id bson.ObjectId, db *mgo.Database) (record User, err error) {
+    user := User{}
+    err = db.C(UserCollection).FindId(id).One(&user)
+    if err != nil {
+        return User{}, err
+    }
+
+    return user, err
+}
+
 func UserFindOne(query bson.M, db *mgo.Database) (record User, err error) {
     user := User{}
     err = db.C(UserCollection).Find(query).One(&user)

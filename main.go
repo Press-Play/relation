@@ -3,10 +3,13 @@ package main
 import (
     "log"
     "github.com/press-play/relation/database"
+    "github.com/press-play/relation/models"
     "github.com/press-play/relation/handlers/auth"
     "github.com/press-play/relation/handlers/people"
     "github.com/press-play/relation/handlers/users"
     "github.com/gin-gonic/gin"
+    "gopkg.in/mgo.v2"
+    "gopkg.in/mgo.v2/bson"
 )
 
 func main() {
@@ -46,9 +49,21 @@ func Database(c *gin.Context) {
 
 func Authentication(c *gin.Context) {
     token := c.Request.Header.Get("Authorization")
-    log.Print(token)
-    // TODO: Return 403 if the token does not match.
-    // c.AbortWithStatus(403)
+    userID := bson.ObjectIdHex(c.Request.Header.Get("User-ID"))
+    db := c.MustGet(database.Param).(*mgo.Database)
+
+    user, err := models.UserFindId(userID, db)
+    if err != nil {
+        c.AbortWithError(403, err)
+        return
+    }
+
+    // Return 403 if the token does not match.
+    log.Print("user.APIToken: ", user.APIToken)
+    if user.APIToken != token {
+        c.AbortWithStatus(403)
+    }
+
     c.Next()
 }
 
