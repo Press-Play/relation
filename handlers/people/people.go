@@ -1,7 +1,6 @@
 package people
 
 import(
-    "time"
     "net/http"
     "github.com/press-play/relation/database"
     "github.com/press-play/relation/models"
@@ -14,8 +13,7 @@ func Find(c *gin.Context) {
     db := c.MustGet(database.Param).(*mgo.Database)
     id := bson.ObjectIdHex(c.Param("_id"))
 
-    result := models.Person{}
-    err := db.C(models.PersonCollection).FindId(id).One(&result)
+    result, err := models.PersonFindId(id, db)
     if err != nil {
         c.AbortWithError(http.StatusBadRequest, err)
         return
@@ -26,15 +24,14 @@ func Find(c *gin.Context) {
 
 func Insert(c *gin.Context) {
     db := c.MustGet(database.Param).(*mgo.Database)
-    result := models.Person{}
-    err := c.Bind(&result)
+    person := models.Person{}
+    err := c.Bind(&person)
     if err != nil {
         c.AbortWithError(http.StatusBadRequest, err)
         return
     }
 
-    result.Created = time.Now()
-    err = db.C(models.PersonCollection).Insert(&result)
+    result, err := models.PersonInsert(person, db)
     if err != nil {
         c.AbortWithError(http.StatusBadRequest, err)
         return

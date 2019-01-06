@@ -2,6 +2,7 @@ package models
 
 import (
     "time"
+    "gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
 )
 
@@ -17,7 +18,32 @@ type Person struct {
     Created   time.Time `json:"created" bson:"created"`
 }
 
-// func PersonFind(u User, db *mgo.Database) (record User, err error) {}
-// func PersonInsert(u User, db *mgo.Database) (record User, err error) {}
+func PersonFindId(id bson.ObjectId, db *mgo.Database) (record Person, err error) {
+    person := Person{}
+    err = db.C(PersonCollection).FindId(id).One(&person)
+    if err != nil {
+        return Person{}, err
+    }
+
+    return person, err
+}
+
+func PersonInsert(person Person, db *mgo.Database) (record Person, err error) {
+    // Create an _id so we can return it.
+    person.ID = bson.NewObjectId()
+
+    // Record the time the record was created.
+    person.Created = time.Now()
+
+    // Insert the reocrd into database collection.
+    err = db.C(PersonCollection).Insert(&person)
+    if err != nil {
+        return Person{}, err
+    }
+
+    // Return the record.
+    return person, err
+}
+
 // func PersonUpdate(u User, db *mgo.Database) (record User, err error) {}
 // func PersonDelete(u User, db *mgo.Database) (record User, err error) {}
